@@ -1,0 +1,12 @@
+*.rar
+*.zip
+*.docx
+*.txt
+configuration apache.txt
+script mysql.txt
+scripts d'insertion.txt
+user script.txt
+VerifierEmailExistence.txt
+Structure Complète Commentée – PHP POO MVC Gestion des Parcs.txt
+*.log
+/vendor/

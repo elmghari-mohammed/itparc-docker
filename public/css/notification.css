@@ -1,0 +1,157 @@
+/* notification.css */
+/* Variables CSS (à inclure si non déjà définies globalement) */
+:root {
+    --light: #f8fafc;
+    --primary: #3b82f6;
+    --success: #10b981;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --info: #3b82f6; /* Utilisez une autre couleur si nécessaire */
+    --white: #ffffff;
+    --border: #e2e8f0;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Conteneur des notifications */
+.notification-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 400px;
+}
+
+/* Style de base pour une notification */
+.notification {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 16px 20px;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    background-color: var(--white);
+    border: 1px solid var(--border);
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Animation d'apparition */
+.notification.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Icône de la notification */
+.notification-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: var(--white);
+}
+
+.notification.success .notification-icon {
+    background-color: var(--success);
+}
+
+.notification.error .notification-icon,
+.notification.danger .notification-icon {
+    background-color: var(--danger);
+}
+
+.notification.warning .notification-icon {
+    background-color: var(--warning);
+}
+
+.notification.info .notification-icon {
+    background-color: var(--info);
+}
+
+/* Contenu de la notification */
+.notification-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.notification-title {
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: #1e293b;
+    font-size: 1rem;
+}
+
+.notification-message {
+    font-size: 0.9rem;
+    color: #64748b;
+    line-height: 1.4;
+}
+
+/* Bouton de fermeture */
+.notification-close {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    color: #94a3b8;
+    padding: 4px;
+    margin-left: auto;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+}
+
+.notification-close:hover {
+    color: #334155;
+    background-color: #f1f5f9;
+}
+
+/* Barre de progression */
+.notification-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: currentColor;
+    transition: width 0.1s linear;
+}
+
+.notification.success .notification-progress {
+    color: var(--success);
+}
+
+.notification.error .notification-progress,
+.notification.danger .notification-progress {
+    color: var(--danger);
+}
+
+.notification.warning .notification-progress {
+    color: var(--warning);
+}
+
+.notification.info .notification-progress {
+    color: var(--info);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .notification-container {
+        top: 15px;
+        left: 15px;
+        right: 15px;
+        max-width: none;
+    }
+}

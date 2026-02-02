@@ -1,0 +1,172 @@
+
+
+        /* Card Styles */
+        .card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 20px;
+            margin: 20px;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Profile Container */
+        .profile-container {
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .profile-header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .profile-header h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 16px;
+        }
+
+        .profile-header p {
+            color: var(--secondary);
+        }
+
+        .motdePass-card {
+            padding: 30px;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border);
+            border-radius: var(--border-radius);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-group input:disabled {
+            background-color: var(--light-secondary);
+            color: var(--secondary);
+            cursor: not-allowed;
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 5px;
+            color: var(--secondary);
+            font-size: 12px;
+        }
+
+        /* Buttons */
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            font-family: 'Inter', sans-serif;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--border);
+            color: var(--secondary);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--light-secondary);
+        }
+
+        /* Password Form Specific */
+        .password-form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .validation-message {
+            margin-top: 5px;
+            font-size: 12px;
+        }
+
+        .validation-message.valid {
+            color: var(--success);
+        }
+
+        .validation-message.invalid {
+            color: var(--danger);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        /* Navigation Link */
+        .nav-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 20px;
+            transition: var(--transition);
+        }
+
+        .nav-link:hover {
+            color: var(--primary-dark);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .form-actions {
+                flex-direction: column;
+            }
+        }

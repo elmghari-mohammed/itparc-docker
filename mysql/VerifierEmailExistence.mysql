@@ -1,0 +1,17 @@
+DELIMITER $$
+
+CREATE PROCEDURE VerifierEmailExistence(IN p_email VARCHAR(50))
+BEGIN
+    SELECT 
+        COALESCE(
+            (SELECT CONCAT('admin:', matricul) FROM admin WHERE email = p_email LIMIT 1),
+            (SELECT CONCAT('support:', matricul) FROM support WHERE email = p_email LIMIT 1),
+            (SELECT CONCAT('technicien:', matricul) FROM technicien WHERE email = p_email LIMIT 1),
+            (SELECT CONCAT('agent:', matricul) FROM agent WHERE email = p_email LIMIT 1),
+            'aucune:aucune'
+        ) AS result;
+END$$
+
+DELIMITER ;
+
+-- CALL VerifierEmailExistence('exemple@email.com');
