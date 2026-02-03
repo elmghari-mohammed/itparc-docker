@@ -1,10 +1,10 @@
--- Supprimer l'ancien utilisateur si existe
-DROP USER IF EXISTS 'user'@'localhost';
+-- Supprimer l'ancien utilisateur si existe (adapté pour Docker %)
+DROP USER IF EXISTS 'user'@'%';
 
--- Créer l'utilisateur avec mot de passe fort
-CREATE USER 'user'@'localhost' IDENTIFIED BY 'P@ssw0rd_2024!';
+-- Créer l'utilisateur avec le mot de passe
+CREATE USER 'user'@'%' IDENTIFIED BY 'P@ssw0rd_2024!';
 
--- Accorder les privilèges SANS CREATE, ALTER, DROP
+-- Accorder les privilèges nécessaires (SANS les droits de suppression de table/base)
 GRANT SELECT, INSERT, UPDATE, DELETE, 
       INDEX, REFERENCES, 
       CREATE TEMPORARY TABLES, LOCK TABLES, 
@@ -12,9 +12,6 @@ GRANT SELECT, INSERT, UPDATE, DELETE,
       CREATE VIEW, SHOW VIEW, 
       CREATE ROUTINE, ALTER ROUTINE, 
       EVENT, TRIGGER 
-ON itparck.* TO 'user'@'localhost';
+ON itparck.* TO 'user'@'%';
 
 FLUSH PRIVILEGES;
-
--- Vérifier les privilèges accordés
-SHOW GRANTS FOR 'user'@'localhost';
