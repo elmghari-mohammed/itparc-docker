@@ -14,9 +14,9 @@ services:
     volumes:
       - db_data:/var/lib/mysql
       # Exécution automatique de vos scripts SQL au démarrage
-      - ./sql/script_mysql.mysql:/docker-entrypoint-initdb.d/1_schema.sql
-      - ./sql/scripts_insertion.mysql:/docker-entrypoint-initdb.d/2_data.sql
-      - ./sql/user_script.mysql:/docker-entrypoint-initdb.d/3_user.sql
+      - ./mysql/script_mysql.mysql:/docker-entrypoint-initdb.d/1_schema.sql
+      - ./mysql/scripts_insertion.mysql:/docker-entrypoint-initdb.d/2_data.sql
+      - ./mysql/user_script.mysql:/docker-entrypoint-initdb.d/3_user.sql
     ports:
       - "3306:3306"
 

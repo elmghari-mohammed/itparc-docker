@@ -15,5 +15,3 @@ RUN a2enmod rewrite
 # 3. Copie du code source dans le dossier du serveur web
 COPY . /var/www/html/
 
-# 4. Permissions pour le dossier d'images (pour les uploads)
-RUN chown -R www-data:www-data /var/www/html/public/img

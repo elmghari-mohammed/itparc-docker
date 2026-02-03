@@ -1,18 +1,10 @@
 # Configuration UTF-8
 AddDefaultCharset UTF-8
-AddType 'text/html; charset=UTF-8' .html .php
-php_value default_charset "UTF-8"
-php_value mbstring.internal_encoding "UTF-8"
-
-# Headers HTTP pour forcer UTF-8
-<IfModule mod_headers.c>
-    Header set Content-Type "text/html; charset=utf-8"
-</IfModule>
 
 RewriteEngine On
 
-# Définir la base de réécriture
-RewriteBase /itparc/
+# Docker utilise la racine, donc on met /
+RewriteBase /
 
 # Si la requête pointe vers un fichier ou dossier existant, ne pas réécrire
 RewriteCond %{REQUEST_FILENAME} !-f
