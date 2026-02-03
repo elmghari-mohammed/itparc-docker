@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  # Base de données MySQL
+  db:
+    image: mysql:8.0
+    container_name: itparc_db
+    restart: always
+    # FIX ACCENTS : Force l'encodage correct pour MySQL 8
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_DATABASE: itparck
+      MYSQL_ROOT_PASSWORD: P@ssw0rd
+    volumes:
+      - db_data:/var/lib/mysql
+      # Exécution automatique de vos scripts SQL au démarrage
+      - ./sql/script_mysql.mysql:/docker-entrypoint-initdb.d/1_schema.sql
+      - ./sql/scripts_insertion.mysql:/docker-entrypoint-initdb.d/2_data.sql
+      - ./sql/user_script.mysql:/docker-entrypoint-initdb.d/3_user.sql
+    ports:
+      - "3306:3306"
+
+  # Interface visuelle (phpMyAdmin)
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: itparc_pma
+    ports:
+      - "8081:80"
+    environment:
+      - PMA_HOST=db
+      - PMA_USER=root
+      - PMA_PASSWORD=P@ssw0rd
+    depends_on:
+      - db
+
+  # Votre application PHP
+  app:
+    build: .
+    container_name: itparc_app
+    restart: always
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    volumes:
+      - .:/var/www/html
+      - ./public/img:/var/www/html/public/img
+
+volumes:
+  db_data:
