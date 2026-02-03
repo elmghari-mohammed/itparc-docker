@@ -1,6 +1,20 @@
-CREATE USER 'user'@'localhost' IDENTIFIED BY '1234';
-GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, INDEX, 
-      REFERENCES, CREATE TEMPORARY TABLES, LOCK TABLES, 
-      EXECUTE, CREATE VIEW, SHOW VIEW, CREATE ROUTINE, 
-      ALTER ROUTINE, EVENT, TRIGGER ON *.* TO 'user'@'localhost';
+-- Supprimer l'ancien utilisateur si existe
+DROP USER IF EXISTS 'user'@'localhost';
+
+-- Créer l'utilisateur avec mot de passe fort
+CREATE USER 'user'@'localhost' IDENTIFIED BY 'P@ssw0rd_2024!';
+
+-- Accorder les privilèges SANS CREATE, ALTER, DROP
+GRANT SELECT, INSERT, UPDATE, DELETE, 
+      INDEX, REFERENCES, 
+      CREATE TEMPORARY TABLES, LOCK TABLES, 
+      EXECUTE, 
+      CREATE VIEW, SHOW VIEW, 
+      CREATE ROUTINE, ALTER ROUTINE, 
+      EVENT, TRIGGER 
+ON itparck.* TO 'user'@'localhost';
+
 FLUSH PRIVILEGES;
+
+-- Vérifier les privilèges accordés
+SHOW GRANTS FOR 'user'@'localhost';
