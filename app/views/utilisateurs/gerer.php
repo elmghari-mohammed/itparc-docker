@@ -182,7 +182,7 @@ let allUsers = <?php echo json_encode($users); ?>;
 let services = <?php echo json_encode($services); ?>;
 let filteredUsers = [...allUsers];
 let currentPage = 1;
-const usersPerPage = 5;
+const usersPerPage = 6;
 let currentSort = 'desc';
 let currentUserId = null;
 
