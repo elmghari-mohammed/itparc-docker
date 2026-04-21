@@ -1,0 +1,268 @@
+-- ======================================================
+-- SCRIPT DE CRÉATION DE LA BASE ITParck
+-- ======================================================
+
+-- Création de la base de données
+CREATE DATABASE IF NOT EXISTS itparck
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
+
+USE itparck;
+
+-- ======================================================
+-- 1. TABLES DE RÉFÉRENCE
+-- ======================================================
+
+-- Table des services
+CREATE TABLE service (
+    id INT AUTO_INCREMENT,
+    nom VARCHAR(50) NOT NULL UNIQUE,
+    description VARCHAR(255),
+    PRIMARY KEY (id)
+);
+
+-- Table des types de matériel
+CREATE TABLE type (
+    id INT AUTO_INCREMENT,
+    nom VARCHAR(50) NOT NULL UNIQUE,
+    description VARCHAR(255) NULL,
+est_personnel BOOLEAN DEFAULT FALSE,
+    PRIMARY KEY (id)
+);
+
+-- Table des sociétés de maintenance externe
+CREATE TABLE s_maintenance(
+   id VARCHAR(50),
+   numero VARCHAR(50),
+   email VARCHAR(100),
+   nom VARCHAR(50) NOT NULL,
+   PRIMARY KEY(id)
+);
+
+-- Table des salles
+CREATE TABLE salle (
+    id INT AUTO_INCREMENT,
+    numero VARCHAR(50),
+    nom VARCHAR(50) NOT NULL,
+    capacite INT NOT NULL DEFAULT 0,
+    service_id INT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (service_id) REFERENCES service(id)
+);
+
+-- Table des notifications
+CREATE TABLE notification (
+   id VARCHAR(50) PRIMARY KEY,
+   user_role VARCHAR(20) NOT NULL,
+   user_id VARCHAR(50) NOT NULL,
+   sujet VARCHAR(100) NOT NULL,
+   message TEXT NOT NULL,
+   lien VARCHAR(255),
+   type VARCHAR(20) NOT NULL,
+   type_id VARCHAR(50) NOT NULL,
+   creator_role VARCHAR(20),
+   creator_id VARCHAR(50),
+   date_creation DATETIME DEFAULT CURRENT_TIMESTAMP,
+   est_lue BOOLEAN DEFAULT FALSE,
+   INDEX idx_notification_user (user_role, user_id),
+   INDEX idx_notification_lue (est_lue)
+);
+
+-- ======================================================
+-- 2. TABLES UTILISATEURS
+-- ======================================================
+
+-- Table Agent
+CREATE TABLE agent (
+   matricul VARCHAR(50),
+   nom VARCHAR(50) NOT NULL,
+   prenom VARCHAR(50),
+   tache VARCHAR(100),
+   date_de_debut DATE NOT NULL DEFAULT (CURRENT_DATE),
+   post VARCHAR(100),
+   email VARCHAR(100) NOT NULL,
+   password TEXT NOT NULL,
+   img VARCHAR(250),
+   N_T INT DEFAULT 0,
+   nombre_tentative INT DEFAULT 0,
+   bloque BOOLEAN DEFAULT FALSE,
+   service_id INT NOT NULL,
+   salle_id INT,
+   PRIMARY KEY (matricul),
+   UNIQUE (email),
+   FOREIGN KEY (service_id) REFERENCES service(id),
+   FOREIGN KEY (salle_id) REFERENCES salle(id),
+   CHECK (nombre_tentative >= 0 AND nombre_tentative <= 5),
+   CHECK (email LIKE '%@%.%')
+);
+
+-- Table Admin
+CREATE TABLE admin (
+   matricul VARCHAR(50),
+   nom VARCHAR(50) NOT NULL,
+   prenom VARCHAR(50),
+   date_de_debut DATE NOT NULL DEFAULT (CURRENT_DATE),
+   email VARCHAR(100) NOT NULL,
+   password TEXT NOT NULL,
+   numero VARCHAR(20),
+   N_T INT DEFAULT 0,
+   nombre_tentative INT DEFAULT 0,
+   bloque BOOLEAN DEFAULT FALSE,
+   service_id INT NOT NULL,
+   salle_id INT,
+   PRIMARY KEY (matricul),
+   UNIQUE (email),
+   FOREIGN KEY (service_id) REFERENCES service(id),
+   FOREIGN KEY (salle_id) REFERENCES salle(id),
+   CHECK (nombre_tentative >= 0 AND nombre_tentative <= 5),
+   CHECK (email LIKE '%@%.%')
+);
+
+-- Table Support (anciens techniciens intégrés)
+CREATE TABLE support (
+   matricul VARCHAR(50),
+   nom VARCHAR(50) NOT NULL,
+   prenom VARCHAR(50),
+   date_de_debut DATE NOT NULL DEFAULT (CURRENT_DATE),
+   email VARCHAR(100) NOT NULL,
+   numero VARCHAR(20),
+   password TEXT NOT NULL,
+   N_T INT DEFAULT 0,
+   nombre_tentative INT DEFAULT 0,
+   bloque BOOLEAN DEFAULT FALSE,
+   service_id INT NOT NULL,
+   salle_id INT,
+   PRIMARY KEY (matricul),
+   UNIQUE (email),
+   FOREIGN KEY (service_id) REFERENCES service(id),
+   FOREIGN KEY (salle_id) REFERENCES salle(id),
+   CHECK (nombre_tentative >= 0 AND nombre_tentative <= 5),
+   CHECK (email LIKE '%@%.%')
+);
+
+-- ======================================================
+-- 3. TABLE MATÉRIEL
+-- ======================================================
+
+CREATE TABLE materiel(
+   id INT AUTO_INCREMENT,
+   serial_number VARCHAR(100) NOT NULL,
+   date_fin DATE,
+   model VARCHAR(50),
+   N_T INT DEFAULT 0,
+   marque VARCHAR(50),
+   date_enregistrement DATE DEFAULT (CURRENT_DATE),
+   garantie_fin DATE,
+   service_fin DATE,
+   detail TEXT,
+   img VARCHAR(250),
+   user_role VARCHAR(20) NULL,
+   id_user VARCHAR(50) NULL,
+   type_id INT NOT NULL,
+   service_id INT NULL,
+   salle_id INT NULL,
+   PRIMARY KEY(id),
+   UNIQUE(serial_number),
+   FOREIGN KEY(type_id) REFERENCES type(id),
+   FOREIGN KEY(service_id) REFERENCES service(id),
+   FOREIGN KEY(salle_id) REFERENCES salle(id),
+   -- Contrainte : soit user_role/id_user remplis, soit service_id/salle_id remplis
+   CHECK (
+     (user_role IS NOT NULL AND id_user IS NOT NULL AND service_id IS NULL AND salle_id IS NULL) OR
+     (user_role IS NULL AND id_user IS NULL AND service_id IS NOT NULL AND salle_id IS NOT NULL) OR
+     (user_role IS NULL AND id_user IS NULL AND service_id IS NULL AND salle_id IS NULL) -- Pour matériel non affecté
+   )
+);
+
+-- ======================================================
+-- 4. TABLE RÉCLAMATIONS
+-- ======================================================
+
+CREATE TABLE reclamation(
+   id VARCHAR(50),
+   date_reclamation DATE NOT NULL,
+   motif VARCHAR(250) NOT NULL,
+   type VARCHAR(20),
+   statut VARCHAR(50) DEFAULT 'en_attente',
+   date_resolution DATE NULL,
+   motif_support VARCHAR(250),
+   user_role VARCHAR(20) NOT NULL,
+   id_user VARCHAR(50) NOT NULL,
+   support_matricul VARCHAR(50) NULL,
+   materiel_id INT NOT NULL,
+   PRIMARY KEY(id),
+   FOREIGN KEY(support_matricul) REFERENCES support(matricul),
+   FOREIGN KEY(materiel_id) REFERENCES materiel(id),
+   CHECK(type IN ('software', 'hardware') OR type IS NULL),
+   CHECK(statut IN ('en_attente', 'en_cours', 'resolu', 'ferme')),
+   CHECK (date_reclamation <= date_resolution OR date_resolution IS NULL)
+);
+
+-- ======================================================
+-- 5. INDEXES
+-- ======================================================
+
+-- Index pour les performances
+CREATE INDEX idx_agent_service ON agent(service_id);
+CREATE INDEX idx_agent_email ON agent(email);
+CREATE INDEX idx_agent_salle ON agent(salle_id);
+
+CREATE INDEX idx_support_service ON support(service_id);
+CREATE INDEX idx_support_email ON support(email);
+CREATE INDEX idx_support_salle ON support(salle_id);
+
+CREATE INDEX idx_admin_service ON admin(service_id);
+CREATE INDEX idx_admin_email ON admin(email);
+CREATE INDEX idx_admin_salle ON admin(salle_id);
+
+-- Index améliorés pour materiel
+CREATE INDEX idx_materiel_user ON materiel(user_role, id_user);
+CREATE INDEX idx_materiel_type ON materiel(type_id);
+CREATE INDEX idx_materiel_serial ON materiel(serial_number);
+CREATE INDEX idx_materiel_service ON materiel(service_id);
+CREATE INDEX idx_materiel_salle ON materiel(salle_id);
+CREATE INDEX idx_materiel_emplacement ON materiel(service_id, salle_id);
+
+CREATE INDEX idx_reclamation_statut ON reclamation(statut);
+CREATE INDEX idx_reclamation_type ON reclamation(type);
+CREATE INDEX idx_reclamation_user ON reclamation(user_role, id_user);
+CREATE INDEX idx_reclamation_support ON reclamation(support_matricul);
+CREATE INDEX idx_reclamation_materiel ON reclamation(materiel_id);
+CREATE INDEX idx_reclamation_date_reclamation ON reclamation(date_reclamation);
+CREATE INDEX idx_reclamation_date_resolution ON reclamation(date_resolution);
+
+-- ======================================================
+-- 6. VUES ET PROCÉDURES
+-- ======================================================
+
+-- Vue pour calculer le statut du matériel automatiquement
+CREATE VIEW v_materiel_statut AS
+SELECT
+    m.*,
+    CASE
+        WHEN m.user_role IS NOT NULL AND m.id_user IS NOT NULL THEN 'en_service'
+        ELSE 'disponible'
+    END AS statut_calcule
+FROM materiel m;
+
+-- Procédure de vérification d'email
+DELIMITER $$
+
+CREATE PROCEDURE VerifierEmailExistence(IN p_email VARCHAR(100))
+BEGIN
+    SELECT
+        COALESCE(
+            (SELECT CONCAT('admin:', matricul) FROM admin WHERE email = p_email LIMIT 1),
+            (SELECT CONCAT('support:', matricul) FROM support WHERE email = p_email LIMIT 1),
+            (SELECT CONCAT('agent:', matricul) FROM agent WHERE email = p_email LIMIT 1),
+            'aucune:aucune'
+        ) AS result;
+END$$
+
+DELIMITER ;
+
+-- CALL VerifierEmailExistence('exemple@email.com');
+
+-- ======================================================
+-- FIN DU SCRIPT
+-- ======================================================

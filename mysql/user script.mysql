@@ -1,0 +1,17 @@
+-- Supprimer l'ancien utilisateur si existe (adapté pour Docker %)
+DROP USER IF EXISTS 'user'@'%';
+
+-- Créer l'utilisateur avec le mot de passe
+CREATE USER 'user'@'%' IDENTIFIED BY 'P@ssw0rd_2024!';
+
+-- Accorder les privilèges nécessaires (SANS les droits de suppression de table/base)
+GRANT SELECT, INSERT, UPDATE, DELETE, 
+      INDEX, REFERENCES, 
+      CREATE TEMPORARY TABLES, LOCK TABLES, 
+      EXECUTE, 
+      CREATE VIEW, SHOW VIEW, 
+      CREATE ROUTINE, ALTER ROUTINE, 
+      EVENT, TRIGGER 
+ON itparck.* TO 'user'@'%';
+
+FLUSH PRIVILEGES;
