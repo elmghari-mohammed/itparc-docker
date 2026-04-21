@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITParck - Notifications Système</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Enhanced Variables */
+        :root {
+            --light: #f8fafc;
+            --light-secondary: #f1f5f9;
+            --primary: #3b82f6;
+            --primary-light: #60a5fa;
+            --primary-dark: #2563eb;
+            --secondary: #64748b;
+            --accent: #8b5cf6;
+            --accent-light: #a78bfa;
+            --dark: #1e293b;
+            --dark-light: #334155;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --white: #ffffff;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --border-radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Enhanced Navbar - Full width */
+        .navbar {
+            width: 100%;
+            max-width: 1200px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 32px;
+            height: 70px;
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .navbar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+
+        .logo {
+            color: var(--dark);
+            font-weight: 700;
+            font-size: 1.75rem;
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+
+        .logo span {
+            color: var(--primary);
+        }
+
+        .nav-content {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            height: 100%;
+        }
+
+        .user-welcome {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        /* Avatar as button */
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1.2rem;
+            cursor: pointer;
+            border: none;
+            transition: var(--transition);
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow);
+        }
+
+        .nav-icons {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .nav-icon {
+            color: var(--secondary);
+            cursor: pointer;
+            position: relative;
+            padding: 10px;
+            border-radius: 50%;
+            transition: var(--transition);
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+        }
+
+        .nav-icon:hover {
+            color: var(--primary);
+            background: var(--light);
+            transform: scale(1.1);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            border: 2px solid var(--white);
+            animation: pulse 2s infinite;
+        }
+
+        /* Dropdown de notifications */
+        .notification-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 32px;
+            width: 420px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            z-index: 999;
+            box-shadow: var(--shadow-lg);
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+        }
+
+        .notification-dropdown.active {
+            max-height: 500px;
+        }
+
+        .notification-container {
+            width: 100%;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 20px;
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .notification-header h2 {
+            font-weight: 600;
+            font-size: 1.25rem;
+        }
+
+        .notification-count {
+            color: var(--white);
+            font-size: 1.5rem;
+        }
+
+        .unread-nonlues {
+            color: var(--white);
+            font-size: 0.9rem;
+            font-weight: 400;
+        }
+
+        .notification-list {
+            max-height: 320px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .notification-item {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: flex-start;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .notification-item:hover {
+            background: var(--light-secondary);
+        }
+
+        .notification-item.unread {
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .notification-icon {
+            margin-right: 14px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 1.2rem;
+        }
+
+        .notification-info {
+            flex: 1;
+        }
+
+        .notification-message {
+            font-weight: 500;
+            margin-bottom: 4px;
+            line-height: 1.4;
+        }
+
+        .notification-time {
+            font-size: 0.75rem;
+            color: var(--secondary);
+            margin-bottom: 8px;
+        }
+
+        .notification-link {
+            font-size: 0.8rem;
+            color: var(--primary);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .notification-link:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+
+        .notification-link i {
+            margin-left: 4px;
+            font-size: 0.7rem;
+        }
+
+        .notification-actions {
+            padding: 16px 20px;
+            display: flex;
+            justify-content: center;
+            border-top: 1px solid var(--border);
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .empty-state {
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--secondary);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            color: var(--border);
+        }
+
+        /* Icônes colorées par type de notification */
+        .icon-success {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+        }
+
+        .icon-warning {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+        }
+
+        .icon-info {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--info);
+        }
+
+        .icon-danger {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+        }
+
+        .icon-system {
+            background: rgba(139, 92, 246, 0.15);
+            color: var(--accent);
+        }
+
+        .icon-material {
+            background: rgba(100, 116, 139, 0.15);
+            color: var(--secondary);
+        }
+
+        .icon-validation {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+        }
+
+        .icon-maintenance {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+        }
+
+        .icon-assignment {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--info);
+        }
+
+        .icon-update {
+            background: rgba(139, 92, 246, 0.15);
+            color: var(--accent);
+        }
+
+        /* Animation pour le badge de notification */
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Style de la barre de défilement */
+        .notification-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .notification-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .notification-list::-webkit-scrollbar-thumb {
+            background: #c5c5c5;
+            border-radius: 10px;
+        }
+
+        .notification-list::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        /* Conteneur de notifications autonome */
+        .standalone-notification-container {
+            width: 100%;
+            max-width: 420px;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        /* Responsive Design pour Navbar et Notifications */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 0 16px;
+            }
+            
+            .user-welcome span {
+                display: none;
+            }
+            
+            .notification-dropdown {
+                right: 16px;
+                width: calc(100vw - 32px);
+                max-width: 400px;
+            }
+            
+            .standalone-notification-container {
+                width: calc(100vw - 32px);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navbar {
+                padding: 0 12px;
+            }
+            
+            .notification-dropdown {
+                right: 0;
+                width: 100vw;
+                border-radius: 0;
+                max-width: 100%;
+            }
+            
+            .standalone-notification-container {
+                width: 100%;
+                border-radius: 0;
+            }
+            
+            .notification-header {
+                padding: 14px 16px;
+            }
+            
+            .notification-header h2 {
+                font-size: 1.1rem;
+            }
+            
+            .notification-count {
+                font-size: 1.2rem;
+            }
+            
+            .notification-item {
+                padding: 12px 16px;
+                flex-direction: column;
+            }
+            
+            .notification-icon {
+                margin-right: 0;
+                margin-bottom: 10px;
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
+            }
+            
+            .notification-message {
+                font-size: 0.9rem;
+            }
+            
+            .notification-time {
+                font-size: 0.7rem;
+            }
+            
+            .notification-actions {
+                padding: 12px 16px;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+                width: 100%;
+            }
+            
+            .nav-icons {
+                gap: 16px;
+            }
+            
+            .nav-icon {
+                width: 36px;
+                height: 36px;
+                font-size: 1.1rem;
+            }
+            
+            .logo {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .notification-icon {
+                width: 30px;
+                height: 30px;
+                font-size: 0.9rem;
+            }
+            
+            .notification-message {
+                font-size: 0.85rem;
+            }
+            
+            .notification-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            
+            .notification-header h2 {
+                font-size: 1rem;
+            }
+            
+            .notification-count {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <div class="logo">IT<span>PARCS</span></div>
+    
+    <div class="nav-content">
+        <div class="nav-icons">
+            <div class="nav-icon" id="notification-icon">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge" id="notification-count">5</span>
+            </div>
+        </div>
+        
+        <div class="user-welcome">
+            <button class="user-avatar">AM</button>
+        </div>
+    </div>
+    
+    <!-- Conteneur de notifications intégré à la navbar -->
+    <div class="notification-dropdown" id="notification-dropdown">
+        <div class="notification-container">
+            <div class="notification-header">
+                <h2>Notifications</h2>
+                <div class="notification-count" id="notification-count">5 <span class="unread-nonlues">non lues</span></div>
+            </div>
+            
+            <div class="notification-list">
+                <!-- Notification 1 - Demande acceptée -->
+                <div class="notification-item unread">
+                    <div class="notification-icon icon-success">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="notification-info">
+                        <div class="notification-message">Votre demande #D-7890 a été acceptée</div>
+                        <div class="notification-time">Il y a 10 minutes</div>
+                        <a href="#" class="notification-link">Voir les détails <i class="fas fa-chevron-right"></i></a>
+                    </div>
+                </div>
+                
+                <!-- Notification 2 - Demande refusée -->
+                <div class="notification-item unread">
+                    <div class="notification-icon icon-danger">
+                        <i class="fas fa-times-circle"></i>
+                    </div>
+                    <div class="notification-info">
+                        <div class="notification-message">Votre demande #D-6543 a été refusée</div>
+                        <div class="notification-time">Il y a 45 minutes</div>
+                        <a href="#" class="notification-link">Voir les détails <i class="fas fa-chevron-right"></i></a>
+                    </div>
+                </div>
+                
+                <!-- Notification 3 - Matériel retiré -->
+                <div class="notification-item unread">
+                    <div class="notification-icon icon-info">
+                        <i class="fas fa-laptop"></i>
+                    </div>
+                    <div class="notification-info">
+                        <div class="notification-message">Votre matériel #M-4321 a été retiré avec succès</div>
+                        <div class="notification-time">Hier, 15:20</div>
+                        <a href="#" class="notification-link">Voir les détails <i class="fas fa-chevron-right"></i></a>
+                    </div>
+                </div>
+                
+                <!-- Notification 4 - Demande en attente -->
+                <div class="notification-item unread">
+                    <div class="notification-icon icon-warning">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="notification-info">
+                        <div class="notification-message">Votre demande #D-9876 est en attente de validation</div>
+                        <div class="notification-time">Hier, 11:30</div>
+                        <a href="#" class="notification-link">Voir les détails <i class="fas fa-chevron-right"></i></a>
+                    </div>
+                </div>
+                
+                <!-- Notification 5 - Réclamation résolue -->
+                <div class="notification-item unread">
+                    <div class="notification-icon icon-success">
+                        <i class="fas fa-check-double"></i>
+                    </div>
+                    <div class="notification-info">
+                        <div class="notification-message">Votre réclamation #R-1122 a été résolue avec succès</div>
+                        <div class="notification-time">12 Oct, 14:15</div>
+                        <a href="#" class="notification-link">Voir les détails <i class="fas fa-chevron-right"></i></a>
+                    </div>
+                </div>
+                
+                <!-- Notification 6 - Réclamation en attente -->
+                <div class="notification-item">
+                    <div class="notification-icon icon-warning">
+                        <i class="fas fa-hourglass-half"></i>
+                    </div>
+                    <div class="notification-info">
+                        <div class="notification-message">Votre réclamation #R-3344 est en attente de traitement</div>
+                        <div class="notification-time">11 Oct, 09:45</div>
+                        <a href="#" class="notification-link">Voir les détails <i class="fas fa-chevron-right"></i></a>
+                    </div>
+                </div>
+                
+                <!-- Notification 7 - Demande de maintenance -->
+                <div class="notification-item">
+                    <div class="notification-icon icon-maintenance">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <div class="notification-info">
+                        <div class="notification-message">Votre réclamation #R-5566 nécessite une intervention de maintenance</div>
+                        <div class="notification-time">10 Oct, 16:30</div>
+                        <a href="#" class="notification-link">Voir les détails <i class="fas fa-chevron-right"></i></a>
+                    </div>
+                </div>
+                
+                <!-- Notification 8 - Demande livrée -->
+                <div class="notification-item">
+                    <div class="notification-icon icon-validation">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <div class="notification-info">
+                        <div class="notification-message">Votre demande #D-7788 a été livrée avec succès</div>
+                        <div class="notification-time">9 Oct, 13:20</div>
+                        <a href="#" class="notification-link">Voir les détails <i class="fas fa-chevron-right"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="notification-actions">
+                <button class="btn btn-primary">Marquer tout comme lu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const notificationIcon = document.getElementById('notification-icon');
+    const notificationDropdown = document.getElementById('notification-dropdown');
+    const markAllReadBtn = document.querySelector('.btn-primary');
+    const notificationItems = document.querySelectorAll('.notification-item');
+    
+    // Gestion de l'ouverture/fermeture du dropdown de notifications
+    notificationIcon.addEventListener('click', function(e) {
+        e.stopPropagation();
+        notificationDropdown.classList.toggle('active');
+    });
+    
+    // Fermer le dropdown si on clique ailleurs
+    document.addEventListener('click', function(e) {
+        if (!notificationDropdown.contains(e.target) && e.target !== notificationIcon && !notificationIcon.contains(e.target)) {
+            notificationDropdown.classList.remove('active');
+        }
+    });
+    
+    // Gestion du bouton "Marquer tout comme lu"
+    markAllReadBtn.addEventListener('click', function() {
+        notificationItems.forEach(item => {
+            item.classList.remove('unread');
+        });
+        
+        // Mettre à jour le compteur de notifications
+        document.querySelector('.notification-count').textContent = '0';
+        
+        // Mettre à jour le badge dans la navbar
+        const notificationBadge = document.querySelector('#notification-icon .notification-badge');
+        if (notificationBadge) {
+            notificationBadge.textContent = '0';
+        }
+        
+        // Changer le texte du bouton temporairement
+        const originalText = this.textContent;
+        this.textContent = '✓ Toutes marquées comme lues';
+        this.style.backgroundColor = '#10b981';
+        
+        setTimeout(() => {
+            this.textContent = originalText;
+            this.style.backgroundColor = '';
+        }, 2000);
+    });
+    
+    // Gestion des clics sur les liens "Voir plus"
+    const notificationLinks = document.querySelectorAll('.notification-link');
+    notificationLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Trouver l'élément parent notification
+            const notificationItem = this.closest('.notification-item');
+            
+            // Marquer comme lu
+            notificationItem.classList.remove('unread');
+            
+            // Mettre à jour le compteur
+            const unreadCount = document.querySelectorAll('.notification-item.unread').length;
+            document.querySelector('.notification-count').textContent = unreadCount;
+            
+            // Mettre à jour le badge dans la navbar
+            const notificationBadge = document.querySelector('#notification-icon .notification-badge');
+            if (notificationBadge) {
+                notificationBadge.textContent = unreadCount;
+            }
+            
+            // Fermer le dropdown après clic (optionnel)
+            notificationDropdown.classList.remove('active');
+            
+            // Simuler une redirection
+            alert("Redirection vers la page de détail...");
+            // Dans la vraie application, cela redirigerait vers:
+            // window.location.href = this.getAttribute('href');
+        });
+    });
+    
+    // Gestion des autres icônes
+    const otherIcons = document.querySelectorAll('.nav-icon:not(#notification-icon)');
+    otherIcons.forEach(icon => {
+        icon.addEventListener('click', () => {
+            alert("Action sur " + icon.querySelector('i').className);
+        });
+    });
+});
+</script>
+
+</body>
+</html>
