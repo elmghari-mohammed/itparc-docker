@@ -1,0 +1,35 @@
+/* Dashboard Base Styles - Container uniquement */
+.dashboard {
+    padding: 1rem;
+    flex: 1;
+    margin: 0 auto;
+    width: 100%;
+    overflow-y: auto;
+    height: calc(100vh - 70px);
+}
+    .dashboard-header {
+        margin-bottom: 0.8rem;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    .greeting { font-size: 2rem; font-weight: 600; margin-bottom: 4px; }
+    .subtitle { color: var(--secondary); font-size: 1.1rem; font-weight: 400; }
+
+
+
+
+/* Responsive Design pour Dashboard Container */
+@media (max-width: 768px) {
+    .dashboard {
+        padding: 1rem;
+        margin-left: 80px;
+        width: calc(100% - 80px);
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard {
+        padding: 6px;
+    }
+}

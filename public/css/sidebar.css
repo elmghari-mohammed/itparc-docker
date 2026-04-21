@@ -1,0 +1,271 @@
+/* Sidebar Enhancement - Version ultra compacte */
+.sidebar {
+    width: 200px; /* Réduit de 240px */
+    background: var(--white);
+    border-right: 1px solid var(--border);
+    padding: 0;
+    position: relative;
+    overflow-y: scroll;
+    height: calc(100vh - 70px);
+    transition: var(--transition);
+    text-decoration: none;
+}
+
+.menu-section {
+    margin-bottom: 4px; /* Réduit */
+    padding: 8px 0; /* Réduit */
+}
+
+.menu-title {
+    padding: 8px 16px; /* Réduit */
+    color: var(--dark);
+    font-weight: 600;
+    font-size: 0.82rem; /* Plus petit */
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Réduit */
+    margin: 4px 0; /* Réduit */
+}
+
+.menu-title i {
+    color: var(--primary);
+    font-size: 0.8rem; /* Plus petit */
+}
+
+.menu-item {
+    padding: 8px 16px; /* Réduit */
+    color: var(--secondary);
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    margin: 1px 8px; /* Réduit */
+    border-radius: 6px; /* Réduit */
+    font-weight: 500;
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+    font-size: 0.78rem; /* Plus petit */
+    min-height: 32px; /* Hauteur minimale réduite */
+}
+
+.menu-item a {
+    text-decoration: none;
+}
+
+.menu-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 0;
+    background: linear-gradient(135deg, var(--primary-light), var(--primary));
+    transition: var(--transition);
+    z-index: -1;
+}
+
+.menu-item i {
+    margin-right: 8px; /* Réduit */
+    width: 14px; /* Réduit */
+    text-align: center;
+    font-size: 0.85rem; /* Plus petit */
+    transition: var(--transition);
+}
+
+.menu-item:hover, .menu-item.active {
+    color: var(--white);
+    transform: translateX(2px); /* Réduit */
+    text-decoration: none;
+}
+
+.menu-item:hover::before, .menu-item.active::before {
+    width: 100%;
+}
+
+.menu-item:hover i, .menu-item.active i {
+    transform: scale(1.03); /* Réduit */
+}
+
+a.menu-item:focus,
+a.menu-item:active {
+    text-decoration: none;
+}
+
+.submenu {
+    margin-left: 20px; /* Réduit */
+    font-size: 0.76rem; /* Plus petit */
+    opacity: 0.8;
+}
+
+.badge {
+    background: var(--danger);
+    color: white;
+    border-radius: 8px;
+    padding: 1px 4px; /* Réduit */
+    font-size: 0.65rem; /* Plus petit */
+    margin-left: auto;
+}
+
+.logout-item {
+    margin-top: 12px; /* Réduit */
+    border-top: 1px solid var(--border);
+    padding-top: 8px; /* Réduit */
+}
+
+.logout-item:hover::before {
+    background: linear-gradient(135deg, var(--danger), #dc2626);
+}
+
+/* Sidebar Toggle Circle */
+.sidebar-toggle-circle {
+    display: none;
+    position: fixed;
+    left: 200px; /* Ajusté à la nouvelle largeur */
+    top: 50%;
+    transform: translateY(-50%) translateX(-50%);
+    width: 28px; /* Réduit */
+    height: 28px; /* Réduit */
+    background: var(--white);
+    border-radius: 50%;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    z-index: 100;
+    transition: var(--transition);
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar-toggle-circle i {
+    color: var(--secondary);
+    transition: var(--transition);
+    font-size: 0.8rem; /* Plus petit */
+}
+
+.sidebar-toggle-circle:hover {
+    background: var(--primary);
+    transform: translateY(-50%) translateX(-50%) scale(1.03); /* Réduit */
+}
+
+.sidebar-toggle-circle:hover i {
+    color: var(--white);
+}
+
+/* Loading Animation */
+.loading {
+    opacity: 0;
+    animation: fadeInUp 0.5s ease forwards; /* Plus rapide */
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(15px); /* Réduit */
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); } /* Réduit */
+}
+
+/* Card Animation Delays */
+.card:nth-child(1) { animation-delay: 0.1s; }
+.card:nth-child(2) { animation-delay: 0.2s; }
+.card:nth-child(3) { animation-delay: 0.3s; }
+.card:nth-child(4) { animation-delay: 0.4s; }
+
+/* Responsive Design - Base */
+@media (max-width: 768px) {
+    .sidebar-toggle-circle {
+        display: flex;
+        left: 50px; /* Ajusté à la nouvelle largeur réduite */
+    }
+
+    .sidebar.open ~ .sidebar-toggle-circle {
+        left: 200px; /* Ajusté à la nouvelle largeur */
+    }
+
+    .sidebar.open ~ .sidebar-toggle-circle i {
+        transform: rotate(180deg);
+    }
+}
+
+/* Responsive Design pour Sidebar */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 50px; /* Réduit de 60px */
+        position: fixed;
+        z-index: 90;
+        left: 0;
+        top: 70px;
+        transform: translateX(0);
+    }
+
+    .sidebar.open {
+        width: 200px; /* Ajusté à la nouvelle largeur */
+        transform: translateX(0);
+    }
+
+    .sidebar.open .menu-item span, 
+    .sidebar.open .menu-title span {
+        display: inline;
+    }
+
+    .sidebar.open .menu-item, 
+    .sidebar.open .menu-title {
+        justify-content: flex-start;
+        margin: 1px 8px; /* Réduit */
+        padding: 8px 16px; /* Réduit */
+    }
+
+    .menu-item span, .menu-title span {
+        display: none;
+    }
+
+    .menu-item, .menu-title {
+        justify-content: center;
+        margin: 1px 4px; /* Réduit */
+        padding: 8px 4px; /* Réduit */
+        font-size: 0.75rem; /* Plus petit sur mobile */
+    }
+
+    .menu-title {
+        border-left: none;
+        border-bottom: 1px solid var(--border); /* Réduit */
+        margin-bottom: 4px; /* Réduit */
+        font-size: 0.78rem; /* Plus petit sur mobile */
+        padding: 6px 8px; /* Réduit */
+    }
+
+    .menu-item i {
+        font-size: 0.78rem; /* Plus petit sur mobile */
+        margin-right: 0; /* Supprimé pour mobile */
+    }
+}
+
+/* Version super compacte optionnelle */
+.sidebar.super-compact {
+    width: 180px;
+}
+
+.sidebar.super-compact .menu-item {
+    padding: 6px 12px;
+    font-size: 0.75rem;
+    min-height: 28px;
+}
+
+.sidebar.super-compact .menu-title {
+    padding: 6px 12px;
+    font-size: 0.78rem;
+}
+
+.sidebar.super-compact .menu-item i {
+    font-size: 0.78rem;
+    margin-right: 6px;
+}
