@@ -1,0 +1,7 @@
+*.rar
+*.zip
+*.docx
+*.txt
+
+*.log
+/vendor/
