@@ -1,0 +1,75 @@
+services:
+
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: itparc_nginx
+    restart: unless-stopped
+    ports:
+      - "8090:80"
+    volumes:
+      - .:/var/www/html:ro
+      - ./public/img:/var/www/html/public/img
+      - ./infra/nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - app
+    networks:
+      - itparc_net
+
+  app:
+    build:
+      context: .
+      dockerfile: infra/php/Dockerfile
+    container_name: itparc_app
+    restart: unless-stopped
+    volumes:
+      - .:/var/www/html
+      - ./public/img:/var/www/html/public/img
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - itparc_net
+
+  db:
+    image: mysql:8.0
+    container_name: itparc_db
+    restart: unless-stopped
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_DATABASE: itparck
+      MYSQL_ROOT_PASSWORD: P@ssw0rd
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./infra/mysql/script_mysql.mysql:/docker-entrypoint-initdb.d/1_schema.sql
+      - ./infra/mysql/scripts_insertion.mysql:/docker-entrypoint-initdb.d/2_data.sql
+      - ./infra/mysql/user_script.mysql:/docker-entrypoint-initdb.d/3_user.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-pP@ssw0rd"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - itparc_net
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: itparc_pma
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: P@ssw0rd
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - itparc_net
+
+volumes:
+  db_data:
+
+networks:
+  itparc_net:
+    driver: bridge
