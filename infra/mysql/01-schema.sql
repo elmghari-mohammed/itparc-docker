@@ -264,5 +264,13 @@ DELIMITER ;
 -- CALL VerifierEmailExistence('exemple@email.com');
 
 -- ======================================================
+-- GRANT PRIVILEGES TO APPLICATION USER
+-- ======================================================
+-- Grant all privileges on itparck database to the application user
+-- User is created by MYSQL_USER environment variable in docker-compose
+GRANT ALL PRIVILEGES ON itparck.* TO 'user'@'%';
+FLUSH PRIVILEGES;
+
+-- ======================================================
 -- FIN DU SCRIPT
 -- ======================================================

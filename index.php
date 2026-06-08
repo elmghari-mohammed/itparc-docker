@@ -15,6 +15,10 @@ session_set_cookie_params($sessionLifetime);
 // Inclure la configuration
 require_once(__DIR__ . '/config/config.php');
 
+// Inclure les dépendances de base
+require_once(__DIR__ . '/app/models/Database.php');
+require_once(__DIR__ . '/app/helpers/RouteHelper.php');
+
 // Inclure le routeur
 require_once(__DIR__ . '/core/Router.php');
 

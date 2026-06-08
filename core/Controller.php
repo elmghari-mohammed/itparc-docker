@@ -1,16 +1,18 @@
 <?php
 // /core/Controller.php
 
+use App\models\Database;
+
 require_once(__DIR__ . '/../config/config.php');
 require_once(__DIR__ . '/../app/models/Database.php');
 require_once(__DIR__ . '/../app/helpers/RouteHelper.php');
 
 class Controller {
-    protected $db;
+
     protected $currentPage;
     
     public function __construct() {
-        $this->db = Database::getInstance();
+
         $this->currentPage = RouterHelper::getCurrentPage();
         $this->startSessionIfNeeded();
         
