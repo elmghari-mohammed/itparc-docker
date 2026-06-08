@@ -16,9 +16,10 @@
 # Docker
 .dockerignore
 
-# IDE
+# IDE / Config
 .idea/
 .vscode/
+.claude/
 *.swp
 *.swo
 
